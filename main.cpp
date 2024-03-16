@@ -486,7 +486,7 @@ extern "C"
         // Static Class
         Php::Class<Cryptix> myCrypt("PHPCrypton");
         myCrypt.method<&Cryptix::decrypt>("decode");        
-        myCrypt.method<&Cryptix::obfus>("directoryobfuscation");
+        myCrypt.method<&Cryptix::obfus>("obfuscate");
         extension.add(std::move(myCrypt));
 
         return extension;
