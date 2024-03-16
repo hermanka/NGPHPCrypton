@@ -43,11 +43,9 @@
                 && make -s \
                 && make install -s
 
-        RUN mkdir -p ./phpcrypt-ex
-        COPY ./src ./phpcrypt-ex
-
         # Install PHPCrypton
-                RUN cd ./phpcrypt-ex \
+        RUN git clone https://github.com/hermanka/NGPHPCrypton.git \
+                && cd ./NGPHPCrypton \
                 && make clean -s \
                 && make -s \
                 && make install -s \
@@ -114,7 +112,7 @@
                         run: docker cp web2/. docker-apache:/var/www/html
 
                 - name: Obfuscate
-                        run: docker exec docker-apache php -r "PHPCrypton::directoryobfuscation('/var/www/html/');"
+                        run: docker exec docker-apache php -r "PHPCrypton::obfuscate('/var/www/html/');"
 
                 - name: Check inside container
                         run: |
