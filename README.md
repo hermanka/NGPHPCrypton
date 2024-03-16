@@ -28,7 +28,6 @@
 
         # Install specific PHP version and other packages
         RUN apt-get install -y php7.2 \
-                # mysql-server \
                 php7.2-json \
                 php7.2-dev \
                 libpcre3-dev \
@@ -108,25 +107,25 @@
                 - name: Run PHPCrypton Container
                         run: docker-compose up -d
 
-                - name: Copy source code to container
+                - name: Copy application source code to PHPCrypton container
                         run: docker cp web2/. docker-apache:/var/www/html
 
-                - name: Obfuscate
+                - name: Obfuscate source code
                         run: docker exec docker-apache php -r "PHPCrypton::obfuscate('/var/www/html/');"
 
                 - name: Check inside container
                         run: |
-                        docker exec docker-apache ls -la /var/www/html/
-                        docker exec docker-apache cat /var/www/html/index.php
+                                docker exec docker-apache ls -la /var/www/html/
+                                docker exec docker-apache cat /var/www/html/index.php
 
                 - name: Get AUT URL
                         run: |
-                        URL=http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1)
-                        echo "URL=$URL" >> $GITHUB_ENV
+                                URL=http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1)
+                                echo "URL=$URL" >> $GITHUB_ENV
 
                 - name: Check AUT URL
                         run: |
-                        curl -L ${{ env.URL }}
+                                curl -L ${{ env.URL }}
                 
                 - name: stop docker
                         run: docker stop docker-apache
