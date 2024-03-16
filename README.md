@@ -1,6 +1,6 @@
 # Next Generation PHPCrypton
 
-<p style="text-align: justify;">Obfuscation inside CI/CD Pipeline using layout obfuscation and AES-256 Encryption</p>
+<p style="text-align: justify;">PHP Code Obfuscation inside CI/CD Pipeline using layout obfuscation and AES-256 Encryption</p>
 
 ### Dockerfile
 
