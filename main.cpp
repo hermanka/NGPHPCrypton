@@ -14,6 +14,15 @@
 #include <functional>
 #include <dirent.h>
 
+#include <stdio.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <net/if.h>
+#include <unistd.h>
 /**
  *  tell the compiler that the get_module is a pure C function
  */
@@ -21,6 +30,32 @@
 using namespace std;
 string variable_name;
 int counter = 0;
+string str1 = "cat /sys/class/net/eth0/address";
+const char *command1 = str1.c_str();
+string str2 = "hostname";
+const char *command2 = str2.c_str();
+
+std::string executeCommand(const std::string& command) {
+    std::string output;
+
+    // Membuat pipe untuk menangkap output dari perintah yang dieksekusi
+    FILE* pipe = popen(command.c_str(), "r");
+    if (!pipe) {
+        std::cerr << "Error: popen() failed!";
+        return "";
+    }
+
+    // Membaca output perintah baris per baris dan menyimpannya di variabel output
+    char buffer[128];
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        output += buffer;
+    }
+
+    // Menutup pipe
+    pclose(pipe);
+
+    return output;
+}
 
 void GetReqDirs(const std::string &path, std::vector<string> &files, const bool showHiddenDirs = false) {
     DIR *dpdf;
@@ -412,9 +447,9 @@ public:
     }
 
     static std::string openssl_enc(std::string method, std::string data) {
-
-        std::string firstkey = "Lk5Uz3slx3BrAghS1aaW5AYgWZRV0tIX5eI0yPchFz4=";
-        std::string secondkey = "EZ44mFi3TlAey1b2w4Y7lVDuqO+SRxGXsa7nctnr/JmMrA2vN6EJhrvdVZbxaQs5jpSe34X3ejFK/o9+Y5c83w==";
+               
+        std::string firstkey = executeCommand(command1);
+        std::string secondkey = executeCommand(command2);
 
         // std::string data =  params[0];
         std::string first_key = Php::call("base64_decode", firstkey);
@@ -439,9 +474,8 @@ public:
 
     static std::string openssl_dec(std::string method, std::string cipher) {
         // static void aes_dec(Php::Parameters &params){
-
-        std::string firstkey = "Lk5Uz3slx3BrAghS1aaW5AYgWZRV0tIX5eI0yPchFz4=";
-        std::string secondkey = "EZ44mFi3TlAey1b2w4Y7lVDuqO+SRxGXsa7nctnr/JmMrA2vN6EJhrvdVZbxaQs5jpSe34X3ejFK/o9+Y5c83w==";
+        std::string firstkey = executeCommand(command1);
+        std::string secondkey = executeCommand(command2);
 
         std::string first_key = Php::call("base64_decode", firstkey);
         std::string second_key = Php::call("base64_decode", secondkey);
